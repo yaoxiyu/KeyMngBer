@@ -70,6 +70,12 @@ int MsgDecoode(
 );
 
 
+int MsgMemFree(
+    void                **point,
+    int                 type
+);
+
+
 #ifdef _cplusplus
 }
 #endif
