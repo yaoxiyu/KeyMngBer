@@ -1,6 +1,5 @@
 build/cmake_install.cmake
 build/CMakeCache.txt
-build/keymng.exe
 build/Makefile
 build/CMakeFiles/cmake.check_cache
 build/CMakeFiles/CMakeDirectoryInformation.cmake
@@ -50,3 +49,16 @@ build/ber/CMakeFiles/BER_LIB.dir/link.txt
 build/ber/CMakeFiles/BER_LIB.dir/progress.make
 .vscode/launch.json
 .vscode/tasks.json
+build/keymng_msg.exe
+build/CMakeFiles/keymng_msg.dir/build.make
+build/CMakeFiles/keymng_msg.dir/C.includecache
+build/CMakeFiles/keymng_msg.dir/cmake_clean.cmake
+build/CMakeFiles/keymng_msg.dir/depend.internal
+build/CMakeFiles/keymng_msg.dir/depend.make
+build/CMakeFiles/keymng_msg.dir/DependInfo.cmake
+build/CMakeFiles/keymng_msg.dir/flags.make
+build/CMakeFiles/keymng_msg.dir/keymng_msg.c.obj
+build/CMakeFiles/keymng_msg.dir/linklibs.rsp
+build/CMakeFiles/keymng_msg.dir/objects.a
+build/CMakeFiles/keymng_msg.dir/objects1.rsp
+build/CMakeFiles/keymng_msg.dir/progress.make
