@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include "keymng_msg.h"
-#include "itcast_asn1_der.h"
-#include "itcastderlog.h"
+#include "ber/itcast_asn1_der.h"
+#include "ber/itcastderlog.h"
 
 
 typedef struct _Teacher{
@@ -314,6 +314,7 @@ int ReqDecode(unsigned char *inData, int inLen, MsgKey_Req **pStruct){
     ITCAST_ANYBUF       *pTmpAnyBuf = NULL;
 
     MsgKey_Req          *pStructReq = NULL;
+
     
     ret = DER_ITCAST_String_To_AnyBuf(&pTmpAnyBuf, inData, inLen);
     if (ret != 0){
@@ -349,7 +350,7 @@ int ReqDecode(unsigned char *inData, int inLen, MsgKey_Req **pStruct){
 
     ret = DER_ItAsn1_ReadPrintableString(pTmp, &pOutData);
     if (ret != 0){
-        ReqFree(pStructReq);
+        ReqFree(&pStructReq);
         DER_ITCAST_FreeQueue(pHeadBuf);
         printf("func DER_ItAsn1_ReadPrintableString() err:%d\n", ret);
         return ret;
@@ -361,7 +362,7 @@ int ReqDecode(unsigned char *inData, int inLen, MsgKey_Req **pStruct){
 
     ret = DER_ItAsn1_ReadPrintableString(pTmp, &pOutData);
     if (ret != 0){
-        ReqFree(pStructReq);
+        ReqFree(&pStructReq);
         DER_ITCAST_FreeQueue(pHeadBuf);
         printf("func DER_ItAsn1_ReadPrintableString() err:%d\n", ret);
         return ret;
@@ -373,7 +374,7 @@ int ReqDecode(unsigned char *inData, int inLen, MsgKey_Req **pStruct){
 
     ret = DER_ItAsn1_ReadPrintableString(pTmp, &pOutData);
     if (ret != 0){
-        ReqFree(pStructReq);
+        ReqFree(&pStructReq);
         DER_ITCAST_FreeQueue(pHeadBuf);
         printf("func DER_ItAsn1_ReadPrintableString() err:%d\n", ret);
         return ret;
@@ -385,7 +386,7 @@ int ReqDecode(unsigned char *inData, int inLen, MsgKey_Req **pStruct){
 
     ret = DER_ItAsn1_ReadPrintableString(pTmp, &pOutData);
     if (ret != 0){
-        ReqFree(pStructReq);
+        ReqFree(&pStructReq);
         DER_ITCAST_FreeQueue(pHeadBuf);
         printf("func DER_ItAsn1_ReadPrintableString() err:%d\n", ret);
         return ret;
@@ -397,7 +398,6 @@ int ReqDecode(unsigned char *inData, int inLen, MsgKey_Req **pStruct){
     DER_ITCAST_FreeQueue(pOutData);
 
     *pStruct = pStructReq;
-    ReqFree(pStructReq);
 
     return ret;
 }
@@ -546,7 +546,7 @@ int ResDecode(unsigned char *inData, int inLen, MsgKey_Res **pStruct){
 
     ret = DER_ItAsn1_ReadPrintableString(pTmp, &pOutData);
     if (ret != 0){
-        ResFree(pStructRes);
+        ResFree(&pStructRes);
         DER_ITCAST_FreeQueue(pHeadBuf);
         printf("func DER_ItAsn1_ReadPrintableString() err:%d\n", ret);
         return ret;
@@ -558,7 +558,7 @@ int ResDecode(unsigned char *inData, int inLen, MsgKey_Res **pStruct){
 
     ret = DER_ItAsn1_ReadPrintableString(pTmp, &pOutData);
     if (ret != 0){
-        ResFree(pStructRes);
+        ResFree(&pStructRes);
         DER_ITCAST_FreeQueue(pHeadBuf);
         printf("func DER_ItAsn1_ReadPrintableString() err:%d\n", ret);
         return ret;
@@ -570,7 +570,7 @@ int ResDecode(unsigned char *inData, int inLen, MsgKey_Res **pStruct){
 
     ret = DER_ItAsn1_ReadPrintableString(pTmp, &pOutData);
     if (ret != 0){
-        ResFree(pStructRes);
+        ResFree(&pStructRes);
         DER_ITCAST_FreeQueue(pHeadBuf);
         printf("func DER_ItAsn1_ReadPrintableString() err:%d\n", ret);
         return ret;
@@ -582,7 +582,7 @@ int ResDecode(unsigned char *inData, int inLen, MsgKey_Res **pStruct){
 
     ret = DER_ItAsn1_ReadInteger(pTmp, &pStructRes->secKeyId);
     if (ret != 0){
-        ResFree(pStructRes);
+        ResFree(&pStructRes);
         DER_ITCAST_FreeQueue(pHeadBuf);
         printf("malloc() err:%d\n", ret);
         return ret;
@@ -592,14 +592,13 @@ int ResDecode(unsigned char *inData, int inLen, MsgKey_Res **pStruct){
     DER_ITCAST_FreeQueue(pOutData);
 
     *pStruct = pStructRes;
-    ResFree(pStructRes);
 
     return ret;
 }
 
 
 
-int MsgEncoode(
+int MsgEncode(
     void                *pStruct,   /*in*/
     int                 type,
     unsigned char       **outData, /*out*/
@@ -609,11 +608,11 @@ int MsgEncoode(
     ITCAST_ANYBUF   *pOutData = NULL;
     int             ret = 0;
 
-    if (pStruct == NULL && type < 0 || pOutData == NULL || outLen == NULL){
-        ret = KeyMng_ParamErr;
-        printf("func MsgEncoode() err:%d\n", ret);
-        return ret;
-    }
+    // if (pStruct == NULL && type < 0 || pOutData == NULL || outLen == NULL){
+    //     ret = KeyMng_ParamErr;
+    //     printf("func MsgEncoode() err:%d\n", ret);
+    //     return ret;
+    // }
     // 编码 type
     ret = DER_ItAsn1_WriteInteger(type, &pHeadBuf);
     if (ret != 0){
@@ -623,7 +622,7 @@ int MsgEncoode(
 
     switch (type) {
         case ID_MsgKey_Teacher:
-            ret = TeacherEecode((Teacher *)pStruct, &pTemp);
+            ret = TeacherEncode((Teacher *)pStruct, &pTemp);
             break;
         case ID_MsgKey_Req:
             ret = ReqEncode((MsgKey_Req *)pStruct, &pTemp);
@@ -670,7 +669,7 @@ int MsgEncoode(
 }
 
  
-int MsgDecoode(
+int MsgDecode(
     unsigned char       *inData,   /*in*/
     int                 inLen,
     void                **pStruct, /*out*/
@@ -701,16 +700,16 @@ int MsgDecoode(
         printf("func DER_ItAsn1_ReadInteger() err:%d\n", ret);
         return ret;
     }
-    
+
     switch (iType){
         case ID_MsgKey_Teacher:
             ret = TeacherDecode(pHeadBuf->next->pData, pHeadBuf->next->dataLen, (Teacher **)pStruct);
             break;
         case ID_MsgKey_Req:
-
+            ret = ReqDecode(pHeadBuf->next->pData, pHeadBuf->next->dataLen, (MsgKey_Req **)pStruct);
             break;
         case ID_MsgKey_Res:
-
+            ret = ResDecode(pHeadBuf->next->pData, pHeadBuf->next->dataLen, (MsgKey_Res **)pStruct);
             break;
         default:
             ret = KeyMng_TypeErr;
@@ -720,9 +719,11 @@ int MsgDecoode(
 
     if (ret != 0){
         DER_ITCAST_FreeQueue(pHeadBuf);
+        printf("switch decode err:%d\n", ret);
         return ret;
     }
 
+    type = (int *)malloc(sizeof(int));
     *type = iType;
     DER_ITCAST_FreeQueue(pHeadBuf);
 
@@ -751,15 +752,112 @@ int MsgMemFree(
             TeacherFree((Teacher **)point);
             break;
         case ID_MsgKey_Req:
-
+            ReqFree((MsgKey_Req **)point);
             break;
         case ID_MsgKey_Res:
-
+            ResFree((MsgKey_Res **)point);
             break;
         default:
-
             break;
     }
 
     return 0;
+}
+
+
+
+int myWriteFileReq(unsigned char *buf, int len){
+    FILE *fp = NULL;
+    fp = fopen("D:/req.ber", "wb+");
+    if (fp == NULL){
+        printf("fopen file error!\n");
+        return -1;
+    }
+
+    fwrite(buf, 1, len, fp);
+    fclose(fp);
+    return 0;
+}
+
+int myWriteFileRes(unsigned char *buf, int len){
+    FILE *fp = NULL;
+    fp = fopen("D:/res.ber", "wb+");
+    if (fp == NULL){
+        printf("fopen file error!\n");
+        return -1;
+    }
+
+    fwrite(buf, 1, len, fp);
+    fclose(fp);
+    return 0;
+}
+
+int main(){
+    int             ret = 0;
+    MsgKey_Req      *t1;
+    MsgKey_Req      *pT1 = NULL;
+    MsgKey_Res      *t2;
+    MsgKey_Res      *pT2 = NULL;
+    unsigned char   *myOut = NULL;
+    int             myOutLen;
+    int             *type = NULL;
+
+    t1 = (MsgKey_Req *)malloc(sizeof(MsgKey_Req));
+    t1->cmdType = 9527;
+    strcpy(t1->clientId, "clientId");
+    strcpy(t1->authCode, "authCode");
+    strcpy(t1->serverId, "serverId");
+    strcpy(t1->r1, "random");
+
+
+
+    MsgEncode(t1, ID_MsgKey_Req, &myOut, &myOutLen);
+
+    printf("req encode finished -- myOut = %s, myOutLen = %d\n", myOut, myOutLen);
+
+    myWriteFileReq(myOut, myOutLen);
+
+
+    MsgDecode(myOut, myOutLen, &pT1, type);
+
+
+    if (memcmp(pT1->clientId, t1->clientId, strlen(t1->clientId)) == 0
+    && memcmp(pT1->serverId, t1->serverId, strlen(t1->serverId)) == 0){
+        printf("req编解码成功\n");
+    } else {
+        printf("req编解码失败\n");
+    }
+    free(t1);
+
+    t2 = (MsgKey_Res *)malloc(sizeof(MsgKey_Res));
+    t2->rv = 404;
+    strcpy(t2->clientId, "clientId");
+    strcpy(t2->serverId, "serverId");
+    strcpy(t2->r2, "random");
+    t2->secKeyId = 9527;
+
+
+    MsgEncode(t2, ID_MsgKey_Res, &myOut, &myOutLen);
+
+    printf("res encode finished -- myOut = %s, myOutLen = %d\n", myOut, myOutLen);
+
+    myWriteFileRes(myOut, myOutLen);
+
+
+    MsgDecode(myOut, myOutLen, &pT2, type);
+
+
+    if (memcmp(pT2->clientId, t2->clientId, strlen(t2->clientId)) == 0
+    && memcmp(pT2->serverId, t2->serverId, strlen(t2->serverId)) == 0){
+        printf("req编解码成功\n");
+    } else {
+        printf("req编解码失败\n");
+    }
+
+    free(t2);
+    MsgMemFree(&pT1, ID_MsgKey_Req);
+    MsgMemFree(&pT2, ID_MsgKey_Res);
+
+    return 0;
+    
 }
