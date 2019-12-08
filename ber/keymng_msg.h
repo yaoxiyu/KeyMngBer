@@ -47,7 +47,7 @@ typedef struct _MsgKey_Res{
  pOutData : 输出的编码后的报文
  outLen :   输出的数据长度
 */
-
+__declspec(dllexport)
 int MsgEncoode(
     void                *pStruct,   /*in*/
     int                 type,
@@ -61,7 +61,7 @@ int MsgEncoode(
  pStruct :  输出的解码后的数据（其空间实在内部开辟的，也需要用内部定义的free函数进行释放）
  type :     结构的类型标识（返回类型标识，使得调用者通过flag进行判断，将pStruct转换为相应的结构体）
 */
-
+__declspec(dllexport)
 int MsgDecoode(
     unsigned char       *inData,   /*in*/
     int                 inLen,
@@ -69,7 +69,7 @@ int MsgDecoode(
     int                 *type       /*out*/
 );
 
-
+__declspec(dllexport)
 int MsgMemFree(
     void                **point,
     int                 type
